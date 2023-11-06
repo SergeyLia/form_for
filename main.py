@@ -1,33 +1,25 @@
 import tkinter as tk
 import docx
 import os
-import win32api
+import subprocess
 
 def submit():
     name = entry_name.get()
     patronymic = entry_patronymic.get()
     surname = entry_surname.get()
     phone = entry_phone.get()
-
     doc = docx.Document("template1.docx")
-
     for paragraph in doc.paragraphs:
         paragraph.text = paragraph.text.replace("{{name}}", name)
         paragraph.text = paragraph.text.replace("{{patronymic}}", patronymic)
         paragraph.text = paragraph.text.replace("{{surname}}", surname)
         paragraph.text = paragraph.text.replace("{{phone}}", phone)
-
     doc.save("filled_template.docx")
-    show_saved_template()
+    open_saved_template()
 
-def show_saved_template():
-    saved_doc = docx.Document("filled_template.docx")
-    template_text = "\n".join([paragraph.text for paragraph in saved_doc.paragraphs])
-    result_label.config(text=template_text)
-
-def print_template():
+def open_saved_template():
     file_path = os.path.abspath("filled_template.docx")
-    win32api.ShellExecute(0, "print", file_path, None, ".", 0)
+    subprocess.Popen([file_path], shell=True)
 
 root = tk.Tk()
 
@@ -62,7 +54,5 @@ button.pack()
 result_label = tk.Label(root, text="")
 result_label.pack()
 
-print_button = tk.Button(root, text="Печать", command=print_template)
-print_button.pack()
 
 root.mainloop()
